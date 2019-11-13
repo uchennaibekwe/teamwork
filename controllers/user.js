@@ -10,9 +10,9 @@ exports.CreateAccount = (req, res) => {
 
     client.query('SELECT email FROM users WHERE email = $1', [req.body.email], (err, checkresult) => {
         if (checkresult.rowCount > 0) { // email already exist
-            res.status(200).json({
-                status: 'success',
-                data: 'User already Exist!',
+            res.status(401).json({
+                status: 'error',
+                error: 'User already Exist!',
             });
             client.end();
         } else { // create a new user account
@@ -61,4 +61,46 @@ exports.CreateAccount = (req, res) => {
         }
     });
     // create user
+};
+
+exports.Signin = (req, res) => {
+    const client = new Client();
+    client.connect();
+
+    client.query('SELECT id, password FROM users WHERE email = $1', [req.body.email])
+    .then((result) => {
+        if (!result.rowCount) { // email is NOT found
+            res.status(401).json({
+                status: 'error',
+                error: 'User not found!',
+            });
+            client.end();
+        }
+        // check password
+        bcrypt.compare(req.body.password, result.rows[0].password).then(
+            (valid) => {
+                if (!valid) { // password mismatch
+                    res.status(401).json({
+                        status: 'error',
+                        error: 'Incorrect Password!',
+                    });
+                    client.end();
+                }
+                // else
+                // generate token
+                const token = jwt.sign({ userId: result.rows[0].id }, 'RANDOM_PRODUCTION_SECRET_TOKEN', { expiresIn: '24h' });
+                res.status(200).json({
+                    status: 'success',
+                    token,
+                    userId: result.rows[0].id,
+                });
+            },
+        );
+    })
+    .catch((err) => {
+        res.status(500).json({
+            status: 'error',
+            error: err.stack,
+        });
+    }).then(() => client.end());
 };
