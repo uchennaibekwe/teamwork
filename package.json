@@ -1,0 +1,35 @@
+{
+  "name": "teamwork",
+  "version": "1.0.0",
+  "description": "A capstone project - DevCTraining",
+  "main": "server.js",
+  "scripts": {
+    "test": "jasmine"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/uchennaibekwe/teamwork.git"
+  },
+  "author": "Uchenna Ibekwe",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/uchennaibekwe/teamwork/issues"
+  },
+  "homepage": "https://github.com/uchennaibekwe/teamwork#readme",
+  "devDependencies": {
+    "eslint": "^6.6.0",
+    "eslint-plugin-import": "^2.18.2",
+    "eslint-plugin-jasmine": "^2.10.1",
+    "jasmine": "^3.5.0"
+  },
+  "dependencies": {
+    "bcrypt": "^3.0.6",
+    "body-parser": "^1.19.0",
+    "dotenv": "^8.2.0",
+    "eslint-config-airbnb": "^18.0.1",
+    "express": "^4.17.1",
+    "jsonwebtoken": "^8.5.1",
+    "pg": "^7.12.1",
+    "request": "^2.88.0"
+  }
+}
