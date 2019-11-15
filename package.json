@@ -4,7 +4,7 @@
   "description": "A capstone project - DevCTraining",
   "main": "server.js",
   "scripts": {
-    "test": "jasmine"
+    "test": "mocha"
   },
   "repository": {
     "type": "git",
@@ -17,10 +17,13 @@
   },
   "homepage": "https://github.com/uchennaibekwe/teamwork#readme",
   "devDependencies": {
+    "chai": "^4.2.0",
     "eslint": "^6.6.0",
     "eslint-plugin-import": "^2.18.2",
     "eslint-plugin-jasmine": "^2.10.1",
-    "jasmine": "^3.5.0"
+    "mocha": "^6.2.2",
+    "superagent": "^5.1.0",
+    "supertest": "^4.0.2"
   },
   "dependencies": {
     "bcrypt": "^3.0.6",

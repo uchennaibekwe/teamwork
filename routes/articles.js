@@ -3,7 +3,8 @@ const express = require('express');
 
 const router = express.Router();
 const articleCtrl = require('../controllers/articles.js');
+const auth = require('../middleware/auth');
 
-router.post('/auth/create-user', articleCtrl.CreateEmployee);
+router.post('/create-gif', auth, articleCtrl.CreateGifs);
 
 module.exports = router;

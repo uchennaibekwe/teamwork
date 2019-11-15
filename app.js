@@ -3,6 +3,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const userRoutes = require('./routes/user.js');
+const articleRoutes = require('./routes/articles.js');
 
 const app = express();
 
@@ -16,6 +17,7 @@ app.use((req, res, next) => {
 
 app.use(bodyParser.json());// changes the body from the frontend into a useable json object
 app.use('/api/v1/auth', userRoutes);
+app.use('/api/v1', articleRoutes);
 
 // app.get('/', (req, res, next) => {
 //     res.status(200).send('Cool');
