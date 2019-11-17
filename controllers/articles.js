@@ -41,3 +41,55 @@ exports.CreateArticle = (req, res) => {
     })
     .then(() => client.end());
 };
+
+// Update Article
+exports.UpdateArticle = (req, res) => {
+    const inputs = [
+        req.body.title,
+        req.body.article,
+        req.params.id,
+    ];
+
+    const client = new Client();
+    client.connect();
+    client.query('UPDATE articles SET title = $1, article = $2 WHERE id = $3 RETURNING title, article', inputs)
+    .then((result) => {
+        res.status(200).json({
+            status: 'success',
+            data: {
+                message: 'Article successfully updated',
+                title: result.rows[0].title,
+                article: result.rows[0].article,
+            },
+        });
+    })
+    .catch((error) => {
+        res.status(500).json({
+            status: 'error',
+            error: error.stack,
+        });
+    })
+    .then(() => client.end());
+};
+
+// Update Article
+exports.DeleteArticle = (req, res) => {
+    const client = new Client();
+    client.connect();
+    client.query('DELETE FROM articles WHERE id = $1 RETURNING title, article', [req.params.id])
+    .then(() => {
+        res.status(200).json({
+            status: 'success',
+            data: {
+                message: 'Article successfully deleted',
+            },
+        });
+    })
+    .catch((error) => {
+        res.status(500).json({
+            status: 'error',
+            error: error.stack,
+        });
+    })
+    .then(() => client.end());
+};
