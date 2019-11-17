@@ -47,7 +47,7 @@ exports.UpdateArticle = (req, res) => {
     const inputs = [
         req.body.title,
         req.body.article,
-        req.params.id,
+        req.params.articleId,
     ];
 
     const client = new Client();
@@ -76,7 +76,7 @@ exports.UpdateArticle = (req, res) => {
 exports.DeleteArticle = (req, res) => {
     const client = new Client();
     client.connect();
-    client.query('DELETE FROM articles WHERE id = $1 RETURNING title, article', [req.params.id])
+    client.query('DELETE FROM articles WHERE id = $1 RETURNING title, article', [req.params.articleid])
     .then(() => {
         res.status(200).json({
             status: 'success',
