@@ -13,6 +13,8 @@ module.exports = (req, res, next) => {
 				error: 'Unauthorized Request',
 			});
 		} else {
+			// store the id value and then 'next()'
+			req.user = decodeToken;
 			next();
 		}
 	} catch (e) {

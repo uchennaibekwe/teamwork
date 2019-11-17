@@ -91,8 +91,10 @@ exports.Signin = (req, res) => {
                 const token = jwt.sign({ userId: result.rows[0].id }, 'RANDOM_PRODUCTION_SECRET_TOKEN', { expiresIn: '24h' });
                 res.status(200).json({
                     status: 'success',
-                    token,
-                    userId: result.rows[0].id,
+                    data: {
+                        token,
+                        userId: result.rows[0].id,
+                    },
                 });
             },
         );

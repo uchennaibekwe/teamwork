@@ -11,30 +11,38 @@ describe('Team work', () => {
       password: 'password',
     };
 
-    const userCredentials = {
-      firstname: 'Uchenna',
-      lastname: 'Ibekwe',
-      email: 'anothertesteremployee@gmail.com',
-      password: 'password',
-      gender: 'male',
-      jobrole: 'product manager',
-      department: 'ICT',
-      address: '1, Umechukwu Street',
-    };
+    // const userCredentials = {
+    //   firstname: 'Uchenna',
+    //   lastname: 'Ibekwe',
+    //   email: 'anothertesteremployee@gmail.com',
+    //   password: 'password',
+    //   gender: 'male',
+    //   jobrole: 'product manager',
+    //   department: 'ICT',
+    //   address: '1, Umechukwu Street',
+    // };
 
-    describe('# User Account', () => {
-      it('should create a user', (done) => {
-        request(app).post('/api/v1/auth/create-user').send(userCredentials).end((err, res) => {
-          expect(res.statusCode).to.equal(201);
-          done();
-        });
-      });
+    // describe('# User Account', () => {
+    //   it('should create a user', (done) => {
+    //     request(app).post('/api/v1/auth/create-user').send(userCredentials).end((err, res) => {
+    //         expect(res.body).to.be.an('object');
+    //         expect(res.statusCode).to.equal(201);
+    //         expect(res.body.status).to.equal('success');
+    //         expect(res.body.data).to.have.property('token');
+    //         expect(res.body.data).to.have.property('userId');
+    //         expect(res.body.data).to.have.property('message');
+    //       done();
+    //     });
+    //   });
 
-      it('should log in a user', (done) => {
-        request(app).post('/api/v1/auth/signin').send(validUserCredential).end((err, res) => {
-          expect(res.statusCode).to.equal(200);
-          done();
-        });
+    it('should log in a user', (done) => {
+      request(app).post('/api/v1/auth/signin').send(validUserCredential).end((err, res) => {
+        expect(res.body).to.be.an('object');
+        expect(res.statusCode).to.equal(200);
+        expect(res.body.status).to.equal('success');
+        expect(res.body.data).to.have.property('token');
+        expect(res.body.data).to.have.property('userId');
+        done();
       });
     });
 });

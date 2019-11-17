@@ -2,12 +2,12 @@
 const express = require('express');
 const multipart = require('connect-multiparty');
 
-const multipartMiddleware = multipart();
-const articleCtrl = require('../controllers/articles.js');
+const multipartMiddleware = multipart();// for 'multipart/form-data' attribute value
+const gifCtrl = require('../controllers/gifs.js');
 const auth = require('../middleware/auth');
 
 const router = express.Router();
 
-router.post('/articles', auth, multipartMiddleware, articleCtrl.CreateArticle);
+router.post('/gifs', auth, multipartMiddleware, gifCtrl.CreateGifs);
 
 module.exports = router;
