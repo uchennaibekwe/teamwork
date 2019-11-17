@@ -8,6 +8,8 @@ const auth = require('../middleware/auth');
 
 const router = express.Router();
 
-router.post('/gifs', auth, multipartMiddleware, gifCtrl.CreateGifs);
+router
+    .post('/gifs', auth, multipartMiddleware, gifCtrl.CreateGifs);
+    .delete('/gifs/:gifId', auth, multipartMiddleware, gifCtrl.DeleteGifs);
 
 module.exports = router;
