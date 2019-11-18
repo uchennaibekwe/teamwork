@@ -65,7 +65,7 @@ describe('Team work: Other Routes', () => {
 
                     request(app).delete(`${baseUrl}/gifs/${gifId}`)
                     .set('Authorization', `Bearer ${token}`)
-                    .end((err, res) => {
+                    .end((_err, res) => {
                         expect(res.body).to.be.an('object');
                         expect(res.statusCode).to.equal(200);// status
                         expect(res.body.status).to.equal('success');
@@ -208,6 +208,22 @@ describe('Team work: Other Routes', () => {
                         done();
                     });
                 });
+            });
+        });
+    });
+
+    describe('GET/ feed - View All Posts', () => {
+        it('should show all posts with the most recently posted articles or gifs first', (done) => {
+            request(app)
+            .get(`${baseUrl}/feed`)
+            .set('Authorization', `Bearer ${token}`)
+            .end((err, res) => {
+                expect(res.body).to.be.an('object');
+                expect(res.statusCode).to.equal(200);// status
+                expect(res.body.status).to.equal('success');
+                expect(res.body.data).to.be.an('array');
+                expect(res.body.data[0]).to.have.property('id');
+                done();
             });
         });
     });

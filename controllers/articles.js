@@ -142,3 +142,28 @@ exports.CreateArticleComment = (req, res) => {
     });
     // .then(() => client.end());
 };
+
+// Get feed
+// Update Article
+exports.GetFeed = (req, res) => {
+    const query = `SELECT id, title, image_url AS article_url, created_on, user_id AS authorId  FROM gifs
+                    UNION ALL
+                    SELECT id, title, article, created_on, user_id FROM articles
+                    ORDER BY created_on DESC`;
+    const client = new Client();
+    client.connect();
+    client.query(query)
+    .then((result) => {
+        res.status(200).json({
+            status: 'success',
+            data: result.rows,
+        });
+    })
+    .catch((error) => {
+        res.status(500).json({
+            status: 'error',
+            error: error.stack,
+        });
+    })
+    .then(() => client.end());
+};
