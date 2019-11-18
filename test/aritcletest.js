@@ -28,40 +28,50 @@ describe('Team work: Other Routes', () => {
     });
 
     describe('gifs', () => {
-        // describe('/POST gif', () => {
-        //     it('should create gif', (done) => {
-        //         request(app).post(`${baseUrl}/gifs`)
-        //         .set('Content-Type', 'application/x-www-form-urlencoded')
-        //         .set('Authorization', `Bearer ${token}`)
-        //         .field('title', 'Test Title')
-        //         .attach('image', fs.readFileSync('test/image/love.png'), 'love.png')
+        describe('/POST gif', () => {
+            it('should create gif', (done) => {
+                request(app).post(`${baseUrl}/gifs`)
+                .set('Content-Type', 'application/x-www-form-urlencoded')
+                .set('Authorization', `Bearer ${token}`)
+                .field('title', 'Test Title')
+                .attach('image', fs.readFileSync('test/image/love.png'), 'love.png')
 
-        //         .end((err, res) => {
-        //             expect(res.body).to.be.an('object');
-        //             expect(res.statusCode).to.equal(201);// status
-        //             expect(res.body.status).to.equal('success');
-        //             expect(res.body.data).to.have.property('gifId');
-        //             expect(res.body.data).to.have.property('message');
-        //             expect(res.body.data).to.have.property('createdOn');
-        //             expect(res.body.data).to.have.property('title');
-        //             expect(res.body.data).to.have.property('imageUrl');
-        //             // done();
-        //         });
-        //         done();
-        //     });
-        // });
+                .end((err, res) => {
+                    expect(res.body).to.be.an('object');
+                    expect(res.statusCode).to.equal(201);// status
+                    expect(res.body.status).to.equal('success');
+                    expect(res.body.data).to.have.property('gifId');
+                    expect(res.body.data).to.have.property('message');
+                    expect(res.body.data).to.have.property('createdOn');
+                    expect(res.body.data).to.have.property('title');
+                    expect(res.body.data).to.have.property('imageUrl');
+                    // done();
+                });
+                done();
+            });
+        });
 
         describe('/DELETE gif', () => {
             it('should delete gifs', (done) => {
                 // create the gif to delete
-                request(app).delete(`${baseUrl}/gifs/1`)
+                request(app).post(`${baseUrl}/gifs`)
+                .set('Content-Type', 'application/x-www-form-urlencoded')
                 .set('Authorization', `Bearer ${token}`)
-                .end((err, res) => {
-                    expect(res.body).to.be.an('object');
-                    expect(res.statusCode).to.equal(200);// status
-                    expect(res.body.status).to.equal('success');
-                    expect(res.body.data).to.have.property('message');
-                    done();
+                .field('title', 'Test Title')
+                .attach('image', fs.readFileSync('test/image/love.png'), 'love.png')
+                .end((err, response) => {
+                    const result = JSON.parse(response.text);
+                    const { gifId } = result.data;
+
+                    request(app).delete(`${baseUrl}/gifs/${gifId}`)
+                    .set('Authorization', `Bearer ${token}`)
+                    .end((err, res) => {
+                        expect(res.body).to.be.an('object');
+                        expect(res.statusCode).to.equal(200);// status
+                        expect(res.body.status).to.equal('success');
+                        expect(res.body.data).to.have.property('message');
+                        done();
+                    });
                 });
             });
         });
@@ -137,6 +147,64 @@ describe('Team work: Other Routes', () => {
                         expect(res.statusCode).to.equal(200);// status
                         expect(res.body.status).to.equal('success');
                         expect(res.body.data).to.have.property('message');
+                        done();
+                    });
+                });
+            });
+        });
+    });
+
+    describe('Comments', () => {
+        describe('POST /articles/:articleId/comment', () => {
+            it('should create a comment for a particular article', (done) => {
+                // first, create the article to comment on
+                request(app)
+                .post(`${baseUrl}/articles`)
+                .set('Authorization', `Bearer ${token}`)
+                .send({ title: 'Article Title', article: 'Article Boody' })
+                .end((err, response) => {
+                    const result = JSON.parse(response.text);
+                    const { articleId } = result.data;
+
+                    request(app).delete(`${baseUrl}/articles/${articleId}/comment`)
+                    .set('Authorization', `Bearer ${token}`)
+                    .end((err, res) => {
+                        expect(res.body).to.be.an('object');
+                        expect(res.statusCode).to.equal(200);// status
+                        expect(res.body.status).to.equal('success');
+                        expect(res.body.data).to.have.property('message');
+                        expect(res.body.data).to.have.property('createOn');
+                        expect(res.body.data).to.have.property('articleTitle');
+                        expect(res.body.data).to.have.property('article');
+                        expect(res.body.data).to.have.property('comment');
+                        done();
+                    });
+                });
+            });
+        });
+
+        describe('POST /gifs/:gifId/comment', () => {
+            it('should create a comment for a particular article', (done) => {
+                // first, create the gif to comment on
+                request(app).post(`${baseUrl}/gifs`)
+                .set('Content-Type', 'application/x-www-form-urlencoded')
+                .set('Authorization', `Bearer ${token}`)
+                .field('title', 'Test Title')
+                .attach('image', fs.readFileSync('test/image/love.png'), 'love.png')
+                .end((err, response) => {
+                    const result = JSON.parse(response.text);
+                    const { gifId } = result.data;
+
+                    request(app).post(`${baseUrl}/gifs/${gifId}/comment`)
+                    .set('Authorization', `Bearer ${token}`)
+                    .end((_err, res) => {
+                        expect(res.body).to.be.an('object');
+                        expect(res.statusCode).to.equal(200);// status
+                        expect(res.body.status).to.equal('success');
+                        expect(res.body.data).to.have.property('message');
+                        expect(res.body.data).to.have.property('createOn');
+                        expect(res.body.data).to.have.property('gifTitle');
+                        expect(res.body.data).to.have.property('comment');
                         done();
                     });
                 });

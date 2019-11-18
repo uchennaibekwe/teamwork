@@ -97,3 +97,50 @@ exports.DeleteGifs = (req, res) => {
         }
     });
 };
+
+exports.CreateGifComment = (req, res) => {
+    const inputs = [
+        req.user.userId, // user id gotten from the token
+        req.params.gifId,
+        req.body.comment,
+    ];
+    // fetch the article title and content
+    const client = new Client();
+    client.connect();
+    client.query('SELECT title FROM gifs WHERE id = $1', [req.params.gifId])
+    .then((gifResult) => {
+        // if no article is found
+        if (gifResult.rowCount > 0) { // the article is found
+            client.query('INSERT INTO gif_comments (user_id, gif_id, comment) VALUES ($1, $2, $3) RETURNING comment, created_on', inputs)
+            .then((result) => {
+                res.status(201).json({
+                    status: 'success',
+                    data: {
+                        message: 'Comment successfully created',
+                        createdOn: result.rows[0].created_on,
+                        title: gifResult.rows[0].title,
+                        comment: result.rows[0].comment,
+                    },
+                });
+            })
+            .catch((error) => {
+                res.status(500).json({
+                    status: 'error',
+                    error: error.stack,
+                });
+            });
+        } else {
+            res.status(404).json({
+                status: 'error',
+                error: 'Gif not found',
+            });
+        }
+    })
+    .catch((error) => {
+        res.status(500).json({
+            status: 'error',
+            error: error.stack,
+        });
+    });
+    // .then(() => client.end());
+};

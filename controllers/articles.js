@@ -93,3 +93,52 @@ exports.DeleteArticle = (req, res) => {
     })
     .then(() => client.end());
 };
+
+// Add comment to an article
+exports.CreateArticleComment = (req, res) => {
+    const inputs = [
+        req.user.userId, // user id gotten from the token
+        req.params.articleId,
+        req.body.comment,
+    ];
+    // fetch the article title and content
+    const client = new Client();
+    client.connect();
+    client.query('SELECT title, article FROM articles WHERE id = $1', [req.params.articleId])
+    .then((articleResult) => {
+        // if no article is found
+        if (articleResult.rowCount > 0) { // the article is found
+            client.query('INSERT INTO article_comments (user_id, article_id, comment) VALUES ($1, $2, $3) RETURNING comment, created_on', inputs)
+            .then((result) => {
+                res.status(201).json({
+                    status: 'success',
+                    data: {
+                        message: 'Comment successfully created',
+                        createdOn: result.rows[0].created_on,
+                        title: articleResult.rows[0].title,
+                        article: articleResult.rows[0].article,
+                        comment: result.rows[0].comment,
+                    },
+                });
+            })
+            .catch((error) => {
+                res.status(500).json({
+                    status: 'error',
+                    error: error.stack,
+                });
+            });
+        } else {
+            res.status(404).json({
+                status: 'error',
+                error: 'Article not found',
+            });
+        }
+    })
+    .catch((error) => {
+        res.status(500).json({
+            status: 'error',
+            error: error.stack,
+        });
+    });
+    // .then(() => client.end());
+};

@@ -11,6 +11,7 @@ const router = express.Router();
 router
     .post('/articles', auth, multipartMiddleware, articleCtrl.CreateArticle)
     .patch('/articles/:articleId', auth, multipartMiddleware, articleCtrl.UpdateArticle)
-    .delete('/articles/:articleId', auth, multipartMiddleware, articleCtrl.DeleteArticle);
+    .delete('/articles/:articleId', auth, multipartMiddleware, articleCtrl.DeleteArticle)
+    .post('/articles/:articleId/comment', auth, multipartMiddleware, articleCtrl.CreateArticleComment);
 
 module.exports = router;
