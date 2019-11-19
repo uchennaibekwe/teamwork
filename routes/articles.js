@@ -13,6 +13,7 @@ router
     .patch('/articles/:articleId', auth, multipartMiddleware, articleCtrl.UpdateArticle)
     .delete('/articles/:articleId', auth, multipartMiddleware, articleCtrl.DeleteArticle)
     .post('/articles/:articleId/comment', auth, multipartMiddleware, articleCtrl.CreateArticleComment)
-    .get('/feed', auth, multipartMiddleware, articleCtrl.GetFeed);
+    .get('/feed', auth, multipartMiddleware, articleCtrl.GetFeed)
+    .get('/articles/:articleId', auth, multipartMiddleware, articleCtrl.SpecificArticle);
 
 module.exports = router;

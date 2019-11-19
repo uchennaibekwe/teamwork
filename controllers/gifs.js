@@ -57,15 +57,22 @@ exports.CreateGifs = (req, res) => {
 };
 
 exports.DeleteGifs = (req, res) => {
+    // fetch the article title and content
     const client = new Client();
-    // fetch the public_url of the gif to be delete
-    // to be used to delete from cloudinary
-    client.query('SELECT image_url FROM gifs WHERE id = $1', [req.params.id], (err, gif) => {
-        if (gif.rowCount > 0) { // a row is found
-            // delete gif from 'cloudinary' first
-            cloudinary.v2.uploader.destroy(gif.rows[0].image_url, (er, result) => {
-                if (result.result === 'ok') { // successful deletion
-                    client.query('DELETE FROM gifs WHERE id = $2', [req.params.gifId])
+    client.connect();
+    client.query('SELECT id, image_url FROM gifs WHERE id = $1', [req.params.gifId])
+    .then((gifResult) => {
+        // if no article is found
+        if (gifResult.rowCount > 0) { // the article is found
+            const imageName = gifResult.rows[0].image_url.split('/').reverse()[0].split('.')[0];
+            cloudinary.uploader.destroy(imageName, (err, result) => {
+                if (err) {
+                    res.status(400).json({
+                        status: 'error',
+                        error: err.message,
+                    });
+                } else {
+                    client.query('DELETE FROM gifs WHERE id = $1 AND user_id = $2', [req.params.gifId, req.user.userId])
                     .then(() => {
                         res.status(200).json({
                             status: 'success',
@@ -81,21 +88,22 @@ exports.DeleteGifs = (req, res) => {
                         });
                     })
                     .then(() => client.end());
-                } else { // error with deleting file from cloudinary
-                    res.status(500).json({
-                        status: 'error',
-                        error: er,
-                    });
                 }
             });
-            client.end();
         } else {
-            res.status(500).json({
+            res.status(404).json({
                 status: 'error',
-                error: err.stack,
+                error: 'Gif not found',
             });
         }
+    })
+    .catch((error) => {
+        res.status(500).json({
+            status: 'error',
+            error: error.stack,
+        });
     });
+    // .then(() => client.end());
 };
 
 exports.CreateGifComment = (req, res) => {
@@ -128,7 +136,52 @@ exports.CreateGifComment = (req, res) => {
                     status: 'error',
                     error: error.stack,
                 });
+            })
+            .then(() => client.end());
+        } else {
+            res.status(404).json({
+                status: 'error',
+                error: 'Gif not found',
             });
+        }
+    })
+    .catch((error) => {
+        res.status(500).json({
+            status: 'error',
+            error: error.stack,
+        });
+    });
+    // .then(() => client.end());
+};
+
+exports.SpecificGif = (req, res) => {
+    // fetch the article title and content
+    const client = new Client();
+    client.connect();
+    client.query('SELECT title, image_url, created_on FROM gifs WHERE id = $1', [req.params.gifId])
+    .then((gifResult) => {
+        // if no article is found
+        if (gifResult.rowCount > 0) { // the article is found
+            client.query('SELECT id, comment, user_id FROM gif_comments WHERE gif_id = $1', [req.params.gifId])
+            .then((commentResult) => {
+                res.status(200).json({
+                    status: 'success',
+                    data: {
+                        id: req.params.gifId,
+                        createdOn: gifResult.rows[0].created_on,
+                        title: gifResult.rows[0].title,
+                        url: gifResult.rows[0].image_url,
+                        comments: commentResult.rows,
+                    },
+                });
+            })
+            .catch((error) => {
+                res.status(500).json({
+                    status: 'error',
+                    error: error.stack,
+                });
+            })
+            .then(() => client.end());
         } else {
             res.status(404).json({
                 status: 'error',
