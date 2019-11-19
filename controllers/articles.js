@@ -76,7 +76,7 @@ exports.UpdateArticle = (req, res) => {
 exports.DeleteArticle = (req, res) => {
     const client = new Client();
     client.connect();
-    client.query('DELETE FROM articles WHERE id = $1 RETURNING title, article', [req.params.articleid])
+    client.query('DELETE FROM articles WHERE id = $1 AND user_id = $2 RETURNING title, article', [req.params.articleid, req.user.userId])
     .then(() => {
         res.status(200).json({
             status: 'success',
@@ -144,7 +144,6 @@ exports.CreateArticleComment = (req, res) => {
 };
 
 // Get feed
-// Update Article
 exports.GetFeed = (req, res) => {
     const query = `SELECT id, title, image_url AS article_url, created_on, user_id AS authorId  FROM gifs
                     UNION ALL
@@ -164,6 +163,51 @@ exports.GetFeed = (req, res) => {
             status: 'error',
             error: error.stack,
         });
+    });
+    // .then(() => client.end());
+};
+
+// view a particular article
+exports.SpecificArticle = (req, res) => {
+    // fetch the article title and content
+    const client = new Client();
+    client.connect();
+    client.query('SELECT title, article FROM articles WHERE id = $1', [req.params.articleId])
+    .then((articleResult) => {
+        // if no article is found
+        if (articleResult.rowCount > 0) { // the article is found
+            client.query('SELECT * FROM article_comments WHERE article_id = $1', [req.params.articleId])
+            .then((commentResult) => {
+                res.status(200).json({
+                    status: 'success',
+                    data: {
+                        id: req.params.articleId,
+                        createdOn: articleResult.rows[0].created_on,
+                        title: articleResult.rows[0].title,
+                        article: articleResult.rows[0].article,
+                        comments: commentResult.rows,
+                    },
+                });
+            })
+            .catch((error) => {
+                res.status(500).json({
+                    status: 'error',
+                    error: error.stack,
+                });
+            })
+            .then(() => client.end());
+        } else {
+            res.status(404).json({
+                status: 'error',
+                error: 'Article not found',
+            });
+        }
     })
-    .then(() => client.end());
+    .catch((error) => {
+        res.status(500).json({
+            status: 'error',
+            error: error.stack,
+        });
+    });
+    // .then(() => client.end());
 };
