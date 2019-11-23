@@ -42,7 +42,7 @@ describe('Team work', () => {
         expect(res.body.status).to.equal('success');
         expect(res.body.data).to.have.property('token');
         expect(res.body.data).to.have.property('userId');
-        done();
       });
+      done();
     });
 });

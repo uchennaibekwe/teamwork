@@ -4,7 +4,7 @@
   "description": "A capstone project - DevCTraining",
   "main": "server.js",
   "scripts": {
-    "test": "mocha"
+    "test": "mocha --timeout 20000"
   },
   "repository": {
     "type": "git",

@@ -10,7 +10,7 @@ const router = express.Router();
 
 router
     .post('/gifs', auth, multipartMiddleware, gifCtrl.CreateGifs)
-    .delete('/gifs/:gifId', auth, gifCtrl.DeleteGifs)
+    .delete('/gifs/:gifId', auth, multipartMiddleware, gifCtrl.DeleteGifs)
     .post('/gifs/:gifId/comment', auth, multipartMiddleware, gifCtrl.CreateGifComment)
     .get('/gifs/:gifId', auth, multipartMiddleware, gifCtrl.SpecificGif);
 

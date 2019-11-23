@@ -126,7 +126,7 @@ exports.CreateGifComment = (req, res) => {
                     data: {
                         message: 'Comment successfully created',
                         createdOn: result.rows[0].created_on,
-                        title: gifResult.rows[0].title,
+                        gifTitle: gifResult.rows[0].title,
                         comment: result.rows[0].comment,
                     },
                 });

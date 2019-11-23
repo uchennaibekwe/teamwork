@@ -14,12 +14,15 @@ describe('Team work: Other Routes', () => {
     };
 
     let token = '';
-    before((done) => {
+    beforeEach((done) => {
+        // suite.timeout(3000); // A very long environment setup.
+        // setTimeout(done, 2500);
+
         request(app)
         .post(`${baseUrl}/auth/signin`)
         .send(validUserCredential)
         .end((err, response) => {
-        // parse token from the 'response'
+            // parse token from the 'response'
             const result = JSON.parse(response.text);
             token = result.data.token;
             userId = result.data.userId;
@@ -30,13 +33,16 @@ describe('Team work: Other Routes', () => {
     describe('GIFS', () => {
         describe('/POST gifs', () => {
             it('should create gif', (done) => {
+                // this.timeout(3500);
+                // setTimeout(done, 3000);
+
                 request(app).post(`${baseUrl}/gifs`)
                 .set('Content-Type', 'application/x-www-form-urlencoded')
                 .set('Authorization', `Bearer ${token}`)
                 .field('title', 'Test Title')
                 .attach('image', fs.readFileSync('test/image/love.png'), 'love.png')
 
-                .end((err, res) => {
+                .end((_err, res) => {
                     expect(res.body).to.be.an('object');
                     expect(res.statusCode).to.equal(201);// status
                     expect(res.body.status).to.equal('success');
@@ -45,9 +51,8 @@ describe('Team work: Other Routes', () => {
                     expect(res.body.data).to.have.property('createdOn');
                     expect(res.body.data).to.have.property('title');
                     expect(res.body.data).to.have.property('imageUrl');
-                    // done();
+                    done();
                 });
-                done();
             });
         });
 
@@ -70,9 +75,9 @@ describe('Team work: Other Routes', () => {
                         expect(res.statusCode).to.equal(200);// status
                         expect(res.body.status).to.equal('success');
                         expect(res.body.data).to.have.property('message');
+                        done();
                     });
                 });
-                done();
             });
         });
 
@@ -88,20 +93,20 @@ describe('Team work: Other Routes', () => {
                     const result = JSON.parse(response.text);
                     const { gifId } = result.data;
 
-                    request(app).post(`${baseUrl}/gifs/${gifId}`)
+                    request(app).get(`${baseUrl}/gifs/${gifId}`)
                     .set('Authorization', `Bearer ${token}`)
                     .end((_err, res) => {
                         expect(res.body).to.be.an('object');
                         expect(res.statusCode).to.equal(200);// status
                         expect(res.body.status).to.equal('success');
                         expect(res.body.data).to.have.property('id');
-                        expect(res.body.data).to.have.property('createOn');
+                        expect(res.body.data).to.have.property('createdOn');
                         expect(res.body.data).to.have.property('title');
                         expect(res.body.data).to.have.property('url');
                         expect(res.body.data).to.have.property('comments');
+                        done();
                     });
                 });
-                done();
             });
         });
     });
@@ -124,8 +129,8 @@ describe('Team work: Other Routes', () => {
                     expect(res.body.data).to.have.property('articleId');
                     expect(res.body.data).to.have.property('createdOn');
                     expect(res.body.data).to.have.property('title');
+                    done();
                 });
-                done();
             });
         });
 
@@ -152,9 +157,9 @@ describe('Team work: Other Routes', () => {
                         expect(res.body.status).to.equal('success');
                         expect(res.body.data).to.have.property('article').eql('Updated Article');
                         expect(res.body.data).to.have.property('title').eql('Updated Title');
+                        done();
                     });
                 });
-                done();
             });
         });
 
@@ -176,9 +181,9 @@ describe('Team work: Other Routes', () => {
                         expect(res.statusCode).to.equal(200);// status
                         expect(res.body.status).to.equal('success');
                         expect(res.body.data).to.have.property('message');
+                        done();
                     });
                 });
-                done();
             });
         });
 
@@ -204,9 +209,9 @@ describe('Team work: Other Routes', () => {
                         expect(res.body.data).to.have.property('title');
                         expect(res.body.data).to.have.property('article');
                         expect(res.body.data).to.have.property('comments');
+                        done();
                     });
                 });
-                done();
             });
         });
     });
@@ -226,18 +231,19 @@ describe('Team work: Other Routes', () => {
 
                     request(app).post(`${baseUrl}/articles/${articleId}/comment`)
                     .set('Authorization', `Bearer ${token}`)
-                    .end((_err, res) => {
+                    .send({ comment: 'A test comment!' })
+                    .end((er, res) => {
                         expect(res.body).to.be.an('object');
-                        expect(res.statusCode).to.equal(500);// status
+                        expect(res.statusCode).to.equal(201);// status
                         expect(res.body.status).to.equal('success');
                         expect(res.body.data).to.have.property('message');
                         expect(res.body.data).to.have.property('createdOn');
                         expect(res.body.data).to.have.property('articleTitle');
                         expect(res.body.data).to.have.property('article');
                         expect(res.body.data).to.have.property('comment');
+                        done();
                     });
                 });
-                done();
             });
         });
 
@@ -255,17 +261,18 @@ describe('Team work: Other Routes', () => {
 
                     request(app).post(`${baseUrl}/gifs/${gifId}/comment`)
                     .set('Authorization', `Bearer ${token}`)
-                    .end((err, res) => {
+                    .send({ comment: 'A test comment!' })
+                    .end((_err, res) => {
                         expect(res.body).to.be.an('object');
-                        expect(res.statusCode).to.equal(200);// status
+                        expect(res.statusCode).to.equal(201);// status
                         expect(res.body.status).to.equal('success');
                         expect(res.body.data).to.have.property('message');
                         expect(res.body.data).to.have.property('createdOn');
                         expect(res.body.data).to.have.property('gifTitle');
                         expect(res.body.data).to.have.property('comment');
+                        done();
                     });
                 });
-                done();
             });
         });
     });
@@ -281,8 +288,8 @@ describe('Team work: Other Routes', () => {
                 expect(res.body.status).to.equal('success');
                 expect(res.body.data).to.be.an('array');
                 expect(res.body.data[0]).to.have.property('id');
+                done();
             });
-            done();
         });
     });
 });

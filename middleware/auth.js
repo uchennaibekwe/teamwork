@@ -18,9 +18,16 @@ module.exports = (req, res, next) => {
 			next();
 		}
 	} catch (e) {
-		res.status(401).json({
-			status: 'error',
-			error: e.message,
-		});
+		if (e.name === 'TokenExpiredError') {
+			res.status(401).json({
+				status: 'error',
+				error: 'Token Expired! Please log in again',
+			});
+		} else {
+			res.status(401).json({
+				status: 'error',
+				error: e.message,
+			});
+		}
 	}
 };

@@ -115,7 +115,7 @@ exports.CreateArticleComment = (req, res) => {
                     data: {
                         message: 'Comment successfully created',
                         createdOn: result.rows[0].created_on,
-                        title: articleResult.rows[0].title,
+                        articleTitle: articleResult.rows[0].title,
                         article: articleResult.rows[0].article,
                         comment: result.rows[0].comment,
                     },
