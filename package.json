@@ -4,6 +4,7 @@
   "description": "A capstone project - DevCTraining",
   "main": "server.js",
   "scripts": {
+    "start": "node server.js",
     "test": "mocha --timeout 20000"
   },
   "repository": {
@@ -12,6 +13,9 @@
   },
   "author": "Uchenna Ibekwe",
   "license": "ISC",
+  "engines": {
+    "node": "10.16.3"
+  },
   "bugs": {
     "url": "https://github.com/uchennaibekwe/teamwork/issues"
   },
