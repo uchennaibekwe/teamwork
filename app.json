@@ -1,9 +1,17 @@
 {
     "name": "teamwork",
-    "scripts": {},
+    "scripts": {
+      "postdeploy": "psql $DATABASE_URL -f seed.sql"
+    },
     "env": {},
-    "formation": {},
-    "addons": [],
+    "formation": {
+    },
+    "addons": [{
+       "plan": "heroku-postgresql:hobby-dev",
+       "options": {
+         "version": "11"
+       }
+    }],
     "buildpacks": [
       {
         "url": "heroku/nodejs"
