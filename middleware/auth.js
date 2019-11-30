@@ -3,6 +3,13 @@ const jwt = require('jsonwebtoken');
 
 module.exports = (req, res, next) => {
 	try {
+		if (req.headers.authorization === undefined) {
+			res.status(401).json({
+				status: 'error',
+				error: 'Unauthorized Request',
+			});
+		}
+
 		const token = req.headers.authorization.split(' ')[1]; // take the token
 		const decodeToken = jwt.verify(token, 'RANDOM_PRODUCTION_SECRET_TOKEN');
 		const { userId } = decodeToken;
